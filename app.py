@@ -1618,6 +1618,17 @@ Students can learn:
 - 3D visualization
 - Molecular descriptors
 - Structure-property relationships
+- Molecular property comparison
+- Functional group identification
+- Lipinski's Rule of Five
+- Drug-likeness analysis
+- Molecule searching and selection
+- Molecular structure interpretation
+- Molecular similarity concepts
+- Interactive molecule identification
+- Chemical knowledge through quizzes
+
+
 """)
 
 
@@ -1736,7 +1747,7 @@ if page == "🏠 Home":
     st.markdown("Cyber A section  ")
     st.markdown("SRM Institute of Science and Technology, Tiruchirappalli")
 
-    st.info("📧 **For queries, contact:** rsmani84@gmail.com")
+    st.info("📧 **For queries, contact:** alwintony30@gmail.com")
 
 
 # ============================================================
