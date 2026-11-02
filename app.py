@@ -86,12 +86,21 @@ st.markdown("""
 # ============================================================
 
 EXAMPLE_MOLECULES = {
+    "Water": "O",
+    "Methane": "C",
     "Ethanol": "CCO",
+    "Methanol": "CO",
+    "Propanol": "CCCO",
     "Benzene": "c1ccccc1",
     "Phenol": "Oc1ccccc1",
     "Acetic Acid": "CC(=O)O",
+    "Acetone": "CC(=O)C",
+    "Acetaldehyde": "CC=O",
+    "Formaldehyde": "C=O",
     "Aspirin": "CC(=O)Oc1ccccc1C(=O)O",
-    "Caffeine": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    "Caffeine": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+    "Glucose": "C(C1C(C(C(C(O1)O)O)O)O)O",
+    "Glycine": "NCC(=O)O"
 }
 
 if "active_smiles" not in st.session_state:
@@ -1581,6 +1590,8 @@ page = st.sidebar.radio(
 
         "💊 Drug-Likeness Analysis",
 
+        "🔎 Molecule Search and Examples",
+
         "📝 Assessment",
 
         "📄 Final Project Report"
@@ -2584,6 +2595,93 @@ elif page == "📄 Final Project Report":
             )
     else:
         st.info("Enter at least one valid SMILES string to generate the report.")
+
+
+# ==========================================
+# MOLECULE SEARCH AND EXAMPLES PAGE
+# ==========================================
+
+elif page == "🔎 Molecule Search and Examples":
+
+    st.title("🔎 Molecule Search and Examples")
+
+    st.write(
+        "Search and select common molecules from the list "
+        "instead of manually entering SMILES notation."
+    )
+
+    st.info(
+        "Select a molecule by typing its name in the search box."
+    )
+
+    selected_molecule = st.selectbox(
+        "🔍 Search or Select a Molecule",
+        options=list(EXAMPLE_MOLECULES.keys()),
+        key="search_selected_molecule"
+    )
+
+    selected_smiles = EXAMPLE_MOLECULES[selected_molecule]
+
+    st.subheader("🧬 Selected Molecule")
+
+    st.write("**Molecule Name:**", selected_molecule)
+
+    st.code(selected_smiles, language="text")
+
+    mol = get_molecule(selected_smiles)
+
+    if mol is not None:
+
+        st.subheader("Molecular Structure")
+
+        molecule_image = Draw.MolToImage(
+            mol,
+            size=(500, 400)
+        )
+
+        st.image(
+            molecule_image,
+            caption=selected_molecule
+        )
+
+        properties = calculate_properties(mol)
+
+        st.subheader("📊 Molecular Properties")
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric(
+            "Molecular Weight",
+            f'{properties["Molecular Weight"]:.2f}'
+        )
+
+        col2.metric(
+            "LogP",
+            f'{properties["LogP"]:.2f}'
+        )
+
+        col3.metric(
+            "Molecular Formula",
+            properties["Molecular Formula"]
+        )
+
+        st.divider()
+
+        if st.button(
+            "✅ Load This Molecule into Virtual Lab",
+            key="load_searched_molecule"
+        ):
+
+            st.session_state.active_smiles = selected_smiles
+
+            st.success(
+                f"{selected_molecule} loaded successfully! "
+                "Open Molecular Visualization to explore it."
+            )
+
+    else:
+
+        st.error("Unable to generate this molecular structure.")
 
 # ==========================================
 # FUNCTIONAL GROUP DETECTION PAGE
