@@ -2328,6 +2328,47 @@ Aspirin,CC(=O)Oc1ccccc1C(=O)O"""
             use_container_width=True,
             hide_index=True
         )
+        
+        # ==========================================
+        # MOLECULAR PROPERTY COMPARISON GRAPHS
+        # ==========================================
+
+        st.subheader("📊 Molecular Property Comparison Graphs")
+
+        selected_property = st.selectbox(
+            "Select Property to Compare",
+            [
+                "MW",
+                "LogP",
+                "TPSA",
+                "HBD",
+                "HBA",
+                "Rotatable Bonds",
+                "Ring Count"
+            ],
+            key="comparison_graph_property"
+        )
+
+        fig, ax = plt.subplots(figsize=(10, 5))
+
+        ax.bar(
+            df["Molecule"],
+            df[selected_property]
+        )
+
+        ax.set_title(
+            f"{selected_property} Comparison Between Molecules"
+        )
+
+        ax.set_xlabel("Molecules")
+        ax.set_ylabel(selected_property)
+
+        plt.xticks(rotation=30, ha="right")
+        plt.tight_layout()
+
+        st.pyplot(fig)
+
+        plt.close(fig)
 
         st.subheader("📋 Comparison Table")
 
