@@ -1624,7 +1624,6 @@ Students can learn:
 - Drug-likeness analysis
 - Molecule searching and selection
 - Molecular structure interpretation
-- Molecular similarity concepts
 - Interactive molecule identification
 - Chemical knowledge through quizzes
 
@@ -1741,8 +1740,8 @@ if page == "🏠 Home":
     st.divider()
 
     st.markdown("### 👨‍🏫 Developed by")
-    st.markdown("**Alwin Tony s**")
-    st.markdown("Student ")
+    st.markdown("**Alwin Tony S , Ajay P**")
+    st.markdown("Students ")
     st.markdown("Department of Cyber Security  ")
     st.markdown("Cyber A section  ")
     st.markdown("SRM Institute of Science and Technology, Tiruchirappalli")
