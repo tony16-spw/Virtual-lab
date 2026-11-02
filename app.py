@@ -107,7 +107,20 @@ def load_shared_example():
     ]
 
 def get_molecule(smiles):
-    # ==========================================
+   
+    """Convert SMILES into an RDKit molecule."""
+
+    if not smiles or not smiles.strip():
+        return None
+
+    try:
+        mol = Chem.MolFromSmiles(smiles.strip())
+        return mol
+
+    except Exception:
+        return None
+
+# ==========================================
 # FUNCTIONAL GROUP DETECTION
 # ==========================================
 
@@ -140,17 +153,6 @@ def detect_functional_groups(mol):
         })
 
     return results, highlighted_atoms
-    """Convert SMILES into an RDKit molecule."""
-
-    if not smiles or not smiles.strip():
-        return None
-
-    try:
-        mol = Chem.MolFromSmiles(smiles.strip())
-        return mol
-
-    except Exception:
-        return None
 
 
 # ============================================================
