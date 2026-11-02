@@ -2681,16 +2681,6 @@ elif page == "💊 Drug-Likeness Analysis":
         key="drug_likeness_smiles"
     )
 
-    # ============================================================
-# FOOTER
-# ============================================================
-
-st.divider()
-
-st.caption(
-    "🧪 Cheminformatics Virtual Laboratory | "
-    "Developed using Python, Streamlit and RDKit"
-)
 
     if st.button("🔍 Analyze Drug-Likeness"):
 
@@ -2817,3 +2807,15 @@ st.caption(
                 mime="text/csv",
                 key="download_drug_likeness"
             )
+
+
+# ============================================================
+# FOOTER
+# ============================================================
+
+st.divider()
+
+st.caption(
+    "🧪 Cheminformatics Virtual Laboratory | "
+    "Developed using Python, Streamlit and RDKit"
+)
