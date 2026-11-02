@@ -1579,6 +1579,8 @@ page = st.sidebar.radio(
 
         "🧪 Functional Group Detection",
 
+        "💊 Drug-Likeness Analysis",
+
         "📝 Assessment",
 
         "📄 Final Project Report"
@@ -2668,3 +2670,149 @@ st.caption(
     "🧪 Cheminformatics Virtual Laboratory | "
     "Developed using Python, Streamlit and RDKit"
 )
+
+
+# ==========================================
+# DRUG-LIKENESS ANALYSIS PAGE
+# ==========================================
+
+elif page == "💊 Drug-Likeness Analysis":
+
+    st.title("💊 Drug-Likeness Analysis")
+
+    st.write(
+        "Analyze a molecule using Lipinski's Rule of Five "
+        "to check four basic physicochemical criteria."
+    )
+
+    smiles_input = st.text_input(
+        "Enter SMILES Notation",
+        value="CCO",
+        key="drug_likeness_smiles"
+    )
+
+    if st.button("🔍 Analyze Drug-Likeness"):
+
+        mol = get_molecule(smiles_input)
+
+        if mol is None:
+
+            st.error("Invalid SMILES notation. Please try again.")
+
+        else:
+
+            properties = calculate_properties(mol)
+
+            st.subheader("🧬 Molecular Information")
+
+            col1, col2, col3 = st.columns(3)
+
+            col1.metric(
+                "Molecular Weight",
+                f'{properties["Molecular Weight"]:.2f}'
+            )
+
+            col2.metric(
+                "LogP",
+                f'{properties["LogP"]:.2f}'
+            )
+
+            col3.metric(
+                "Molecular Formula",
+                properties["Molecular Formula"]
+            )
+
+            st.divider()
+
+            st.subheader("📋 Lipinski Rule of Five Results")
+
+            criteria = [
+                (
+                    "Molecular Weight",
+                    properties["Molecular Weight"],
+                    500,
+                    "≤ 500 g/mol"
+                ),
+                (
+                    "LogP",
+                    properties["LogP"],
+                    5,
+                    "≤ 5"
+                ),
+                (
+                    "Hydrogen Bond Donors (HBD)",
+                    properties["Hydrogen Bond Donors"],
+                    5,
+                    "≤ 5"
+                ),
+                (
+                    "Hydrogen Bond Acceptors (HBA)",
+                    properties["Hydrogen Bond Acceptors"],
+                    10,
+                    "≤ 10"
+                )
+            ]
+
+            rule_rows = []
+
+            violations = 0
+
+            for name, value, limit, guideline in criteria:
+
+                passed = value <= limit
+
+                if not passed:
+                    violations += 1
+
+                rule_rows.append({
+                    "Property": name,
+                    "Calculated Value": value,
+                    "Guideline": guideline,
+                    "Result": "Pass" if passed else "Outside guideline"
+                })
+
+            df_rules = pd.DataFrame(rule_rows)
+
+            st.dataframe(
+                df_rules,
+                use_container_width=True,
+                hide_index=True
+            )
+
+            st.divider()
+
+            st.subheader("📊 Overall Result")
+
+            if violations == 0:
+
+                st.success(
+                    "✅ The molecule meets all four basic "
+                    "Lipinski Rule of Five criteria!"
+                )
+
+            elif violations == 1:
+
+                st.warning(
+                    "⚠️ The molecule has one Rule of Five violation."
+                )
+
+            else:
+
+                st.warning(
+                    f"⚠️ The molecule has {violations} "
+                    "Rule of Five violations."
+                )
+
+            st.caption(
+                "Note: Lipinski's Rule of Five is an educational "
+                "screening guideline. It does not prove that a "
+                "molecule is safe, effective, or suitable as a medicine."
+            )
+
+            st.download_button(
+                "⬇️ Download Drug-Likeness Results (CSV)",
+                data=df_rules.to_csv(index=False).encode("utf-8"),
+                file_name="drug_likeness_results.csv",
+                mime="text/csv",
+                key="download_drug_likeness"
+            )
