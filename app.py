@@ -2505,81 +2505,7 @@ elif page == "📝 Assessment":
 
 elif page == "📄 Final Project Report":
 
-    # ==========================================
-# FUNCTIONAL GROUP DETECTION PAGE
-# ==========================================
-
-elif page == "🧪 Functional Group Detection":
-
-    st.title("🧪 Functional Group Detection")
-
-    st.write(
-        "Enter a SMILES notation to automatically identify "
-        "functional groups present in the molecule."
-    )
-
-    smiles_input = st.text_input(
-        "Enter SMILES Notation",
-        value="CCO",
-        key="functional_group_smiles"
-    )
-
-    if st.button("🔍 Detect Functional Groups"):
-
-        mol = get_molecule(smiles_input)
-
-        if mol is None:
-
-            st.error("Invalid SMILES notation. Please try again.")
-
-        else:
-
-            results, highlighted_atoms = detect_functional_groups(mol)
-
-            st.subheader("📋 Detection Results")
-
-            df_groups = pd.DataFrame(results)
-
-            st.dataframe(
-                df_groups,
-                use_container_width=True,
-                hide_index=True
-            )
-
-            st.subheader("🧬 Molecular Structure")
-
-            image = Draw.MolToImage(
-                mol,
-                size=(700, 450),
-                highlightAtoms=list(highlighted_atoms)
-            )
-
-            st.image(
-                image,
-                caption="Detected functional group atoms highlighted"
-            )
-
-            detected = [
-                item["Functional Group"]
-                for item in results
-                if item["Detected"] == "Yes"
-            ]
-
-            st.subheader("📊 Summary")
-
-            if detected:
-
-                st.success(
-                    "Detected Functional Groups: "
-                    + ", ".join(detected)
-                )
-
-            else:
-
-                st.info(
-                    "No supported functional groups were detected."
-                )
-
+   
     st.title("📄 Final Student Molecular Analysis Report")
     st.write(
         "Enter one SMILES string per line. The report will include every valid molecule "
@@ -2656,6 +2582,81 @@ elif page == "🧪 Functional Group Detection":
             )
     else:
         st.info("Enter at least one valid SMILES string to generate the report.")
+
+# ==========================================
+# FUNCTIONAL GROUP DETECTION PAGE
+# ==========================================
+
+elif page == "🧪 Functional Group Detection":
+
+    st.title("🧪 Functional Group Detection")
+
+    st.write(
+        "Enter a SMILES notation to automatically identify "
+        "functional groups present in the molecule."
+    )
+
+    smiles_input = st.text_input(
+        "Enter SMILES Notation",
+        value="CCO",
+        key="functional_group_smiles"
+    )
+
+    if st.button("🔍 Detect Functional Groups"):
+
+        mol = get_molecule(smiles_input)
+
+        if mol is None:
+
+            st.error("Invalid SMILES notation. Please try again.")
+
+        else:
+
+            results, highlighted_atoms = detect_functional_groups(mol)
+
+            st.subheader("📋 Detection Results")
+
+            df_groups = pd.DataFrame(results)
+
+            st.dataframe(
+                df_groups,
+                use_container_width=True,
+                hide_index=True
+            )
+
+            st.subheader("🧬 Molecular Structure")
+
+            image = Draw.MolToImage(
+                mol,
+                size=(700, 450),
+                highlightAtoms=list(highlighted_atoms)
+            )
+
+            st.image(
+                image,
+                caption="Detected functional group atoms highlighted"
+            )
+
+            detected = [
+                item["Functional Group"]
+                for item in results
+                if item["Detected"] == "Yes"
+            ]
+
+            st.subheader("📊 Summary")
+
+            if detected:
+
+                st.success(
+                    "Detected Functional Groups: "
+                    + ", ".join(detected)
+                )
+
+            else:
+
+                st.info(
+                    "No supported functional groups were detected."
+                )
 
 # ============================================================
 # FOOTER
