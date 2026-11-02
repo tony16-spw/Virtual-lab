@@ -2660,16 +2660,6 @@ elif page == "🧪 Functional Group Detection":
                     "No supported functional groups were detected."
                 )
 
-# ============================================================
-# FOOTER
-# ============================================================
-
-st.divider()
-
-st.caption(
-    "🧪 Cheminformatics Virtual Laboratory | "
-    "Developed using Python, Streamlit and RDKit"
-)
 
 
 # ==========================================
@@ -2690,6 +2680,17 @@ elif page == "💊 Drug-Likeness Analysis":
         value="CCO",
         key="drug_likeness_smiles"
     )
+
+    # ============================================================
+# FOOTER
+# ============================================================
+
+st.divider()
+
+st.caption(
+    "🧪 Cheminformatics Virtual Laboratory | "
+    "Developed using Python, Streamlit and RDKit"
+)
 
     if st.button("🔍 Analyze Drug-Likeness"):
 
