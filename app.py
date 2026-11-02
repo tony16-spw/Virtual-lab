@@ -1592,6 +1592,8 @@ page = st.sidebar.radio(
 
         "🔎 Molecule Search and Examples",
 
+        "🎮 Molecule Identification Game",
+
         "📝 Assessment",
 
         "📄 Final Project Report"
@@ -2905,6 +2907,221 @@ elif page == "💊 Drug-Likeness Analysis":
                 mime="text/csv",
                 key="download_drug_likeness"
             )
+
+# ==========================================
+# INTERACTIVE MOLECULE IDENTIFICATION GAME
+# ==========================================
+
+elif page == "🎮 Molecule Identification Game":
+
+    st.title("🎮 Interactive Molecule Identification Game")
+
+    st.write(
+        "Identify molecules by studying their structures, "
+        "molecular formulas and functional groups."
+    )
+
+    st.info("Answer 6 questions. Each correct answer earns 1 point!")
+
+    # --------------------------------------
+    # GAME QUESTIONS
+    # --------------------------------------
+
+    questions = [
+        {
+            "smiles": "CCO",
+            "question": "Identify the name of this molecule.",
+            "options": ["Ethanol", "Benzene", "Acetone", "Phenol"],
+            "answer": "Ethanol"
+        },
+        {
+            "smiles": "c1ccccc1",
+            "question": "What is the molecular formula of this molecule?",
+            "options": ["C6H6", "C2H6O", "C6H12O6", "C7H8"],
+            "answer": "C6H6"
+        },
+        {
+            "smiles": "CC(=O)O",
+            "question": "Which functional group is present in this molecule?",
+            "options": [
+                "Alcohol",
+                "Ketone",
+                "Carboxylic Acid",
+                "Amine"
+            ],
+            "answer": "Carboxylic Acid"
+        },
+        {
+            "smiles": "CC(=O)C",
+            "question": "Identify the name of this molecule.",
+            "options": ["Ethanol", "Acetone", "Benzene", "Methanol"],
+            "answer": "Acetone"
+        },
+        {
+            "smiles": "Oc1ccccc1",
+            "question": "What is the molecular formula of this molecule?",
+            "options": ["C6H6", "C6H6O", "C2H6O", "C7H8"],
+            "answer": "C6H6O"
+        },
+        {
+            "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+            "question": "Which functional groups are present in Aspirin?",
+            "options": [
+                "Alcohol and Amine",
+                "Ketone and Aldehyde",
+                "Carboxylic Acid and Ester",
+                "Amine and Ether"
+            ],
+            "answer": "Carboxylic Acid and Ester"
+        }
+    ]
+
+    # --------------------------------------
+    # INITIALIZE GAME VARIABLES
+    # --------------------------------------
+
+    if "game_question" not in st.session_state:
+        st.session_state.game_question = 0
+
+    if "game_score" not in st.session_state:
+        st.session_state.game_score = 0
+
+    if "game_submitted" not in st.session_state:
+        st.session_state.game_submitted = False
+
+    if "game_completed" not in st.session_state:
+        st.session_state.game_completed = False
+
+    # --------------------------------------
+    # DISPLAY GAME
+    # --------------------------------------
+
+    if st.session_state.game_completed:
+
+        st.subheader("🏆 Game Completed!")
+
+        st.metric(
+            "Your Final Score",
+            f'{st.session_state.game_score} / 6'
+        )
+
+        if st.session_state.game_score == 6:
+            st.success("Excellent! You answered all questions correctly!")
+
+        elif st.session_state.game_score >= 4:
+            st.success("Great job! You have good molecular knowledge.")
+
+        elif st.session_state.game_score >= 2:
+            st.info("Good effort! Keep practising.")
+
+        else:
+            st.info("Keep learning and try again!")
+
+        if st.button("🔄 Play Again", key="game_restart"):
+
+            st.session_state.game_question = 0
+            st.session_state.game_score = 0
+            st.session_state.game_submitted = False
+            st.session_state.game_completed = False
+
+            st.rerun()
+
+    else:
+
+        current = st.session_state.game_question
+
+        question_data = questions[current]
+
+        st.progress((current + 1) / len(questions))
+
+        st.write(
+            f"**Question {current + 1} of {len(questions)}**"
+        )
+
+        st.metric(
+            "Current Score",
+            st.session_state.game_score
+        )
+
+        # Display molecular structure
+
+        mol = get_molecule(question_data["smiles"])
+
+        st.subheader("🧬 Identify This Molecule")
+
+        if mol is not None:
+
+            molecule_image = Draw.MolToImage(
+                mol,
+                size=(500, 350)
+            )
+
+            st.image(molecule_image)
+
+        st.markdown(
+            f"### {question_data['question']}"
+        )
+
+        # Answer form
+
+        if not st.session_state.game_submitted:
+
+            with st.form(key=f"molecule_game_form_{current}"):
+
+                selected_answer = st.radio(
+                    "Choose your answer:",
+                    question_data["options"]
+                )
+
+                submitted = st.form_submit_button(
+                    "✅ Submit Answer"
+                )
+
+                if submitted:
+
+                    if selected_answer == question_data["answer"]:
+
+                        st.session_state.game_score += 1
+
+                        st.session_state.game_feedback = "correct"
+
+                    else:
+
+                        st.session_state.game_feedback = "incorrect"
+
+                    st.session_state.game_submitted = True
+
+                    st.rerun()
+
+        else:
+
+            if st.session_state.game_feedback == "correct":
+
+                st.success("🎉 Correct answer! You earned 1 point.")
+
+            else:
+
+                st.error(
+                    "Incorrect answer. Correct answer: "
+                    + question_data["answer"]
+                )
+
+            st.write(
+                f"**Correct Answer:** {question_data['answer']}"
+            )
+
+            if st.button("➡️ Next Question", key=f"next_game_{current}"):
+
+                if current + 1 < len(questions):
+
+                    st.session_state.game_question += 1
+                    st.session_state.game_submitted = False
+
+                else:
+
+                    st.session_state.game_completed = True
+
+                st.rerun()
 
 
 # ============================================================
