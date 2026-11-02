@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from io import BytesIO
+import pandas as pd
+import matplotlib.pyplot as plt
+from rdkit import Chem
+from rdkit.Chem import Descriptors, rdMolDescriptors
 
 # RDKit
 from rdkit import Chem
