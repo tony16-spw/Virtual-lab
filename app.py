@@ -107,6 +107,39 @@ def load_shared_example():
     ]
 
 def get_molecule(smiles):
+    # ==========================================
+# FUNCTIONAL GROUP DETECTION
+# ==========================================
+
+def detect_functional_groups(mol):
+
+    functional_groups = {
+        "Alcohol": "[OX2H][CX4;!$(C=O)]",
+        "Ketone": "[CX3](=O)([#6])[#6]",
+        "Aldehyde": "[CX3H1](=O)[#6]",
+        "Amine": "[NX3;!$(N-C=O);!$(N-S=O)]",
+        "Carboxylic Acid": "[CX3](=O)[OX2H1]"
+    }
+
+    results = []
+    highlighted_atoms = set()
+
+    for group_name, smarts in functional_groups.items():
+
+        pattern = Chem.MolFromSmarts(smarts)
+
+        matches = mol.GetSubstructMatches(pattern)
+
+        for match in matches:
+            highlighted_atoms.update(match)
+
+        results.append({
+            "Functional Group": group_name,
+            "Count": len(matches),
+            "Detected": "Yes" if matches else "No"
+        })
+
+    return results, highlighted_atoms
     """Convert SMILES into an RDKit molecule."""
 
     if not smiles or not smiles.strip():
@@ -1542,6 +1575,8 @@ page = st.sidebar.radio(
 
         "📈 Structure–Property Analysis",
 
+        "🧪 Functional Group Detection",
+
         "📝 Assessment",
 
         "📄 Final Project Report"
@@ -1631,7 +1666,8 @@ if page == "🏠 Home":
     ✅ Compare multiple molecules
 
     ✅ Complete an assessment
-    """)
+
+  """)
 
     st.markdown("### Example Molecules")
 
@@ -2466,6 +2502,81 @@ elif page == "📝 Assessment":
 # ============================================================
 
 elif page == "📄 Final Project Report":
+
+    # ==========================================
+# FUNCTIONAL GROUP DETECTION PAGE
+# ==========================================
+
+elif page == "🧪 Functional Group Detection":
+
+    st.title("🧪 Functional Group Detection")
+
+    st.write(
+        "Enter a SMILES notation to automatically identify "
+        "functional groups present in the molecule."
+    )
+
+    smiles_input = st.text_input(
+        "Enter SMILES Notation",
+        value="CCO",
+        key="functional_group_smiles"
+    )
+
+    if st.button("🔍 Detect Functional Groups"):
+
+        mol = get_molecule(smiles_input)
+
+        if mol is None:
+
+            st.error("Invalid SMILES notation. Please try again.")
+
+        else:
+
+            results, highlighted_atoms = detect_functional_groups(mol)
+
+            st.subheader("📋 Detection Results")
+
+            df_groups = pd.DataFrame(results)
+
+            st.dataframe(
+                df_groups,
+                use_container_width=True,
+                hide_index=True
+            )
+
+            st.subheader("🧬 Molecular Structure")
+
+            image = Draw.MolToImage(
+                mol,
+                size=(700, 450),
+                highlightAtoms=list(highlighted_atoms)
+            )
+
+            st.image(
+                image,
+                caption="Detected functional group atoms highlighted"
+            )
+
+            detected = [
+                item["Functional Group"]
+                for item in results
+                if item["Detected"] == "Yes"
+            ]
+
+            st.subheader("📊 Summary")
+
+            if detected:
+
+                st.success(
+                    "Detected Functional Groups: "
+                    + ", ".join(detected)
+                )
+
+            else:
+
+                st.info(
+                    "No supported functional groups were detected."
+                )
 
     st.title("📄 Final Student Molecular Analysis Report")
     st.write(
